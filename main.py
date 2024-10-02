@@ -110,44 +110,48 @@ class B_Live(BasePlugin):
                 pass
             await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("成功开启动态推送")], False)
             while not stop_thread:
-                for id in ids:
-                    get_information(id)
+                try:
+                    for id in ids:
+                        get_information(id)
+                        time.sleep(60)
+                        if os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt")):
+                            with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt"), "r",
+                                      encoding="utf-8") as file:
+                                lines = file.readlines()
+                                try:
+                                    if text != lines[-1].replace("\n", ""):
+                                        text = lines[-1].replace("\n", "")
+                                        self.ap.logger.info(text)
+                                        if re.search('.png', text):
+                                            # 设置 API Token 和上传图片的路径
+                                            global api_token
+                                            file_path = text
+
+                                            # 设置请求头和文件
+                                            headers = {
+                                                'Authorization': api_token
+                                            }
+                                            files = {
+                                                'smfile': open(file_path, 'rb')
+                                            }
+
+                                            # 发起 POST 请求上传图片
+                                            response = requests.post('https://sm.ms/api/v2/upload', headers=headers,
+                                                                     files=files)
+                                            if response.status_code == 200:
+                                                inf = response.json()
+                                                image_url = inf['data']['url']
+                                                ctx.add_return("reply", [Image(url=image_url)])
+                                                await ctx.send_message(target_type='group', target_id=621523873,
+                                                                       message=MessageChain([Image(url=image_url)]))
+                                        # else:
+                                        #     # await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [(text)],False)
+                                        #     await ctx.send_message(target_type='group', target_id=123456789, message=text)
+                                except:
+                                    continue
                     time.sleep(60)
-                    if os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt")):
-                        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt"), "r",
-                                  encoding="utf-8") as file:
-                            lines = file.readlines()
-                            try:
-                                if text != lines[-1].replace("\n", ""):
-                                    text = lines[-1].replace("\n", "")
-                                    self.ap.logger.info(text)
-                                    if re.search('.png', text):
-                                        # 设置 API Token 和上传图片的路径
-                                        global api_token
-                                        file_path = text
-
-                                        # 设置请求头和文件
-                                        headers = {
-                                            'Authorization': api_token
-                                        }
-                                        files = {
-                                            'smfile': open(file_path, 'rb')
-                                        }
-
-                                        # 发起 POST 请求上传图片
-                                        response = requests.post('https://sm.ms/api/v2/upload', headers=headers,
-                                                                 files=files)
-                                        if response.status_code == 200:
-                                            inf = response.json()
-                                            image_url = inf['data']['url']
-                                            ctx.add_return("reply", [Image(url=image_url)])
-                                            await ctx.send_message(target_type='group', target_id=123456789, message=MessageChain([Image(url=image_url)]))
-                                    # else:
-                                    #     # await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [(text)],False)
-                                    #     await ctx.send_message(target_type='group', target_id=123456789, message=text)
-                            except:
-                                continue
-                time.sleep(60)
+                except:
+                    continue
     # 插件卸载时触发
     def __del__(self):
         pass
