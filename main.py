@@ -112,7 +112,7 @@ class B_Live(BasePlugin):
             while not stop_thread:
                 for id in ids:
                     get_information(id)
-                    time.sleep(10)
+                    time.sleep(60)
                     if os.path.exists(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt")):
                         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "path.txt"), "r",
                                   encoding="utf-8") as file:
