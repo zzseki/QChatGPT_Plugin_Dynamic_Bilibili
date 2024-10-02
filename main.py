@@ -142,8 +142,7 @@ class B_Live(BasePlugin):
                                                 inf = response.json()
                                                 image_url = inf['data']['url']
                                                 ctx.add_return("reply", [Image(url=image_url)])
-                                                await ctx.send_message(target_type='group', target_id=621523873,
-                                                                       message=MessageChain([Image(url=image_url)]))
+                                                await ctx.send_message(target_type='group', target_id=123456789, message=MessageChain([Image(url=image_url)]))
                                         # else:
                                         #     # await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [(text)],False)
                                         #     await ctx.send_message(target_type='group', target_id=123456789, message=text)
