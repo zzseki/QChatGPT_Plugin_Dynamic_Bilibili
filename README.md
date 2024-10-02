@@ -49,3 +49,5 @@ UID.txt中为你已关注的up主的UID
 ```
 
 注意：上述所有命令只可以私聊发送，在群聊中无法识别
+
+![示例图片](https://s2.loli.net/2024/10/02/o7r2bQNBeLkTzmv.png)
