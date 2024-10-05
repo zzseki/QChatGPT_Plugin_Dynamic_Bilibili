@@ -86,12 +86,16 @@ class B_Live(BasePlugin):
                     # 过滤掉要删除的ID
                     updated_lines = [line for line in lines if line.strip() != id_to_remove]
 
-                    # 写回文件，更新内容
-                    with open(file_path, "w", encoding="utf-8") as file:
-                        file.writelines(updated_lines)
-
-                    await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("取消关注成功")], False)
-                    await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("注意需要关闭并重新开启动态推送功能才会生效")], False)
+                    # 只有当内容有变化时才写回文件
+                    if updated_lines != lines:
+                        with open(file_path, "w", encoding="utf-8") as file:
+                            file.writelines(updated_lines)
+                        print(f"UID {id_to_remove} 已删除。")
+                        await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("取消关注成功")], False)
+                        await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("注意需要关闭并重新开启动态推送功能才会生效")], False)
+                    else:
+                        print(f"UID {id_to_remove} 不存在。")
+                        await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("未关注该up无需取关")], False)
                     ctx.prevent_default()
 
     def run_in_thread(self, ctx):
