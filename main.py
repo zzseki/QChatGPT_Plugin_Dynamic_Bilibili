@@ -33,8 +33,14 @@ class B_Live(BasePlugin):
         if match:
             # await self.main(ctx)
             if thread is None or not thread.is_alive():
-                thread = threading.Thread(target=self.run_in_thread, args=(ctx,), daemon=True)
-                thread.start()
+                file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "UID.txt")
+                with open(file_path, "r", encoding="utf-8") as file:
+                    ids = [line.strip() for line in file if line.strip()]
+                if not ids:
+                    await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("开启失败，关注up数量为0\n请发送'#关注up[UID]'以添加关注")], False)
+                else:
+                    thread = threading.Thread(target=self.run_in_thread, args=(ctx,), daemon=True)
+                    thread.start()
             else:
                 self.ap.logger.info("线程已经在运行中，跳过启动。")
                 await ctx.event.query.adapter.reply_message(ctx.event.query.message_event, [("动态推送已开启，无需重复开启")], False)
